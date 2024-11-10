@@ -1,24 +1,86 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react';
+import { Container, Typography, Box, Paper } from '@mui/material';
+import Map from './components/Map';
+import FilterPanel from './components/FilterPanel';
+import StatisticsPanel from './components/StatisticsPanel';
+import { students, faculties, courses, activities } from './data/students';
 
 function App() {
+  const [selectedFaculty, setSelectedFaculty] = useState('');
+  const [selectedCourse, setSelectedCourse] = useState('');
+  const [selectedActivities, setSelectedActivities] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const filteredStudents = students.filter(student => {
+    const matchesFaculty = !selectedFaculty || student.faculty === selectedFaculty;
+    const matchesCourse = !selectedCourse || student.course === selectedCourse;
+    const matchesActivities = selectedActivities.length === 0 || 
+      selectedActivities.every(activity => student.activities.includes(activity));
+    const matchesSearch = !searchQuery || 
+      student.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      student.group.toLowerCase().includes(searchQuery.toLowerCase());
+
+    return matchesFaculty && matchesCourse && matchesActivities && matchesSearch;
+  });
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
+    <Container maxWidth="lg">
+      <Box sx={{ my: 4 }}>
+        <Paper 
+          elevation={3} 
+          sx={{ 
+            p: 3, 
+            mb: 3, 
+            borderRadius: 2,
+            backgroundColor: '#1976d2',
+            color: 'white'
+          }}
         >
-          Learn React
-        </a>
-      </header>
-    </div>
+          <Typography 
+            variant="h4" 
+            component="h1" 
+            gutterBottom 
+            align="center"
+            sx={{ fontWeight: 'bold' }}
+          >
+            Інтерактивна карта студентів
+          </Typography>
+          <Typography 
+            variant="subtitle1" 
+            align="center"
+            sx={{ opacity: 0.9 }}
+          >
+            Знаходьте студентів за різними критеріями
+          </Typography>
+        </Paper>
+
+        <StatisticsPanel 
+          students={students}
+          selectedFaculty={selectedFaculty}
+          selectedCourse={selectedCourse}
+        />
+        
+        <FilterPanel
+          faculties={faculties}
+          courses={courses}
+          activities={activities}
+          selectedFaculty={selectedFaculty}
+          selectedCourse={selectedCourse}
+          selectedActivities={selectedActivities}
+          searchQuery={searchQuery}
+          onFacultyChange={setSelectedFaculty}
+          onCourseChange={setSelectedCourse}
+          onActivitiesChange={setSelectedActivities}
+          onSearchChange={setSearchQuery}
+        />
+
+        <Map
+          students={filteredStudents}
+          selectedFaculty={selectedFaculty}
+          selectedCourse={selectedCourse}
+        />
+      </Box>
+    </Container>
   );
 }
 
