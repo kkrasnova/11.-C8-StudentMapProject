@@ -2,7 +2,6 @@ import React, { useEffect, useRef } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
-// Замініть на свій токен MapBox
 mapboxgl.accessToken = 'pk.eyJ1Ijoia3Jhc25vdmFtYXJpYSIsImEiOiJjbHRxbWVxbmkwMXNqMmlvNjVqZGxqZGxvIn0.Ry0e_yXmHE_oUqYPZvqbhw';
 
 const Map = ({ students, selectedFaculty, selectedCourse }) => {
